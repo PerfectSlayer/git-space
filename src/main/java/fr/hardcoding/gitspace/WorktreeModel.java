@@ -10,9 +10,10 @@ public class WorktreeModel {
     public WorktreeModel(Path rootDir) throws CommandException {
         this.rootDir = rootDir;
         this.worktrees = GitCommands.listWorktrees(this.rootDir);
-    }
 
-    public static WorktreeModel fromDir(Path dir) throws CommandException {
-        return new WorktreeModel(GitCommands.getRootDir(dir));
+        for (Worktree worktree : this.worktrees) {
+            worktree.remoteBranch = GitCommands.getRemoteBranch(worktree.path);
+            worktree.pullRequest = GitCommands.getPr(this.rootDir, worktree.remoteBranch);
+        }
     }
 }

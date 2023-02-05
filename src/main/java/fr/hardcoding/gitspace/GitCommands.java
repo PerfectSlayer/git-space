@@ -1,23 +1,26 @@
 package fr.hardcoding.gitspace;
 
+import fr.hardcoding.gitspace.ShellUtils.CommandResult;
+
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
 public final class GitCommands {
     public static Path getRootDir(Path dir) throws CommandException {
-        List<String> output = ShellUtils.run("git", "rev-parse", "--show-toplevel");
-        if (output.isEmpty()) {
+        CommandResult result = ShellUtils.run("git", "rev-parse", "--show-toplevel");
+        String firstLine = result.firstLine();
+        if (firstLine.isEmpty()) {
             throw new CommandException("Failed to get root dir for " + dir.toAbsolutePath());
         }
-        return Path.of(output.get(0));
+        return Path.of(firstLine);
     }
 
     public static List<Worktree> listWorktrees(Path rootDir) throws CommandException {
-        List<Worktree> result = new ArrayList<>();
+        List<Worktree> worktrees = new ArrayList<>();
 
-        List<String> output = ShellUtils.run(rootDir, "git", "worktree", "list", "--porcelain");
-
+        CommandResult result = ShellUtils.run(rootDir, "git", "worktree", "list", "--porcelain");
+        List<String> output = result.output();
         int nbLines = output.size();
         if (nbLines % 4 != 0) {
             throw new CommandException("Unexpected output while listing worktrees for " + rootDir.toAbsolutePath());
@@ -39,9 +42,44 @@ public final class GitCommands {
             Worktree worktree = new Worktree();
             worktree.name = name;
             worktree.path = path;
-            worktree.branchName = branch;
-            result.add(worktree);
+            worktree.localBranch = branch;
+            worktrees.add(worktree);
         }
-        return result;
+        return worktrees;
+    }
+
+    public static String getRemoteBranch(Path branchDir) throws CommandException {
+        CommandResult result = ShellUtils.run(branchDir, "git", "rev-parse", "--abbrev-ref", "--symbolic-full-name", "@{u}");
+        String firstLine = result.firstLine();
+        if (firstLine.isEmpty()) {
+            throw new CommandException("Failed to get remote branch for " + branchDir.toAbsolutePath());
+        }
+        return firstLine;
+    }
+
+    public static PullRequest getPr(Path rootDir, String removeBranch) throws CommandException {
+        String shortBranchName = removeBranch;
+        int index = shortBranchName.lastIndexOf("/");
+        if (index != -1) {
+            shortBranchName = shortBranchName.substring(index + 1);
+        }
+        CommandResult result = ShellUtils.run(rootDir, "gh", "pr", "view", shortBranchName);
+        if (!result.isSuccessful()) {
+            return null; // No PR for this branch
+        }
+        int number = 0;
+        String url = null;
+        PullRequestState state = null;
+        for (String line : result.output()) {
+            System.out.println("line = " + line);
+            if (line.startsWith("number:")) {
+                number = Integer.parseInt(line.substring(8));
+            } else if (line.startsWith("url:")) {
+                url = line.substring(6);
+            } else if (line.startsWith("state:")) {
+                state = PullRequestState.parse(line.substring(7));
+            }
+        }
+        return new PullRequest(number, url, state);
     }
 }

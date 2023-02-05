@@ -16,7 +16,8 @@ public class WorktreeTable extends Table<String> {
     public void sync() {
         TableModel<String> tableModel = getTableModel();
         for (Worktree worktree : model.worktrees) {
-            tableModel.addRow(worktree.name, worktree.branchName, "#10");
+            String pullRequest = worktree.pullRequest == null ? "" : "#" + worktree.pullRequest.number() + " " + worktree.pullRequest.state();
+            tableModel.addRow(worktree.name, worktree.localBranch, pullRequest);
         }
     }
 }

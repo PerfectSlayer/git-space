@@ -5,7 +5,7 @@ import java.nio.file.Path;
 public class Worktree {
     String name;
     Path path;
-    String branchName;
-    String remoteBranchName;
-    int prNumber;
+    String localBranch;
+    String remoteBranch;
+    PullRequest pullRequest;
 }
