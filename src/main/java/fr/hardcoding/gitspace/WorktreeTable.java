@@ -5,12 +5,18 @@ import com.googlecode.lanterna.gui2.table.TableModel;
 
 public class WorktreeTable extends Table<String> {
 
-    public WorktreeTable() {
-        super("Worktree", "Branch", "PR");
-        TableModel<String> tableModel = getTableModel();
+    private final WorktreeModel model;
 
-        for (int i=0; i<30; i++) {
-            tableModel.addRow("Worktree-"+i, "/bbujon/change-"+i, "#10"+i);
+    public WorktreeTable(WorktreeModel model) {
+        super("Worktree", "Branch", "PR");
+        this.model = model;
+        sync();
+    }
+
+    public void sync() {
+        TableModel<String> tableModel = getTableModel();
+        for (Worktree worktree : model.worktrees) {
+            tableModel.addRow(worktree.name, worktree.branchName, "#10");
         }
     }
 }

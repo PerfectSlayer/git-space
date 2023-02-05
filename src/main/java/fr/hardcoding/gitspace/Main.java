@@ -22,6 +22,7 @@ import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -62,8 +63,8 @@ public class Main {
 
             Panel contentPanel = new Panel(new BorderLayout());
 
-
-            WorktreeTable table = new WorktreeTable();
+            WorktreeModel model = new WorktreeModel(Path.of("."));
+            WorktreeTable table = new WorktreeTable(model);
             contentPanel.addComponent(table, BorderLayout.Location.CENTER);
 
             contentPanel.addComponent(buildTooltip(), BorderLayout.Location.BOTTOM);
@@ -75,7 +76,7 @@ public class Main {
             MultiWindowTextGUI gui = new MultiWindowTextGUI(screen, new DefaultWindowManager(), new EmptySpace(TextColor.ANSI.BLUE));
             gui.addWindowAndWait(window);
             screen.stopScreen();
-        } catch (IOException e) {
+        } catch (IOException|CommandException e) {
             e.printStackTrace();
         }
     }
