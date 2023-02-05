@@ -20,4 +20,11 @@ public class WorktreeModel {
             worktree.pullRequest = GitCommands.getPr(this.rootDir, worktree.remoteBranch);
         }
     }
+
+    public Worktree get(int index) {
+        if (index < 0 || index >= this.worktrees.size()) {
+            return null;
+        }
+        return this.worktrees.get(index);
+    }
 }

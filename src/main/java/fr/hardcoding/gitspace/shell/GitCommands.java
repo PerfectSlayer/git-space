@@ -77,7 +77,7 @@ public final class GitCommands {
             if (line.startsWith("number:")) {
                 number = Integer.parseInt(line.substring(8));
             } else if (line.startsWith("url:")) {
-                url = line.substring(6);
+                url = line.substring(5);
             } else if (line.startsWith("state:")) {
                 state = PullRequestState.parse(line.substring(7));
             }

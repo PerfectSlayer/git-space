@@ -18,11 +18,15 @@ import com.googlecode.lanterna.gui2.WindowListenerAdapter;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
+import fr.hardcoding.gitspace.model.Worktree;
 import fr.hardcoding.gitspace.shell.CommandException;
 import fr.hardcoding.gitspace.ui.WorktreeModel;
 import fr.hardcoding.gitspace.ui.WorktreeTable;
 
+import java.awt.Desktop;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
@@ -48,19 +52,7 @@ public class Main {
 
             window.setHints(List.of(Window.Hint.FULL_SCREEN));
 
-            window.addWindowListener(new WindowListenerAdapter() {
-                @Override
-                public void onInput(Window basePane, KeyStroke keyStroke, AtomicBoolean deliverEvent) {
-//                    System.out.println(keyStroke);
-                }
 
-                @Override
-                public void onUnhandledInput(Window basePane, KeyStroke keyStroke, AtomicBoolean hasBeenHandled) {
-                    if (Objects.equals(keyStroke.getCharacter(), 'q')) {
-                        window.close();
-                    }
-                }
-            });
 
             Panel contentPanel = new Panel(new BorderLayout());
 
@@ -71,6 +63,29 @@ public class Main {
             contentPanel.addComponent(buildTooltip(), BorderLayout.Location.BOTTOM);
 
             window.setComponent(contentPanel);
+
+            window.addWindowListener(new WindowListenerAdapter() {
+                @Override
+                public void onInput(Window basePane, KeyStroke keyStroke, AtomicBoolean deliverEvent) {
+//                    System.out.println(keyStroke);
+                }
+
+                @Override
+                public void onUnhandledInput(Window basePane, KeyStroke keyStroke, AtomicBoolean hasBeenHandled) {
+                    if (Objects.equals(keyStroke.getCharacter(), 'g')) {
+                        Worktree selectedWorktree = model.get(table.getSelectedRow());
+                        if (selectedWorktree != null && selectedWorktree.pullRequest != null) {
+                            try {
+                                Desktop.getDesktop().browse(new URI(selectedWorktree.pullRequest.url()));
+                            } catch (IOException | URISyntaxException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                    } else if (Objects.equals(keyStroke.getCharacter(), 'q')) {
+                        window.close();
+                    }
+                }
+            });
 
             // Create gui and start gui
 //            MultiWindowTextGUI gui = new MultiWindowTextGUI(screen);
