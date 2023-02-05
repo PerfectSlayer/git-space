@@ -1,4 +1,4 @@
-package fr.hardcoding.gitspace;
+package fr.hardcoding.gitspace.shell;
 
 public class CommandException extends Exception {
     public CommandException(String message) {

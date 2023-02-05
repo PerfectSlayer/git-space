@@ -1,4 +1,4 @@
-package fr.hardcoding.gitspace;
+package fr.hardcoding.gitspace.shell;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -42,16 +42,4 @@ public final class ShellUtils {
         return run(null, command);
     }
 
-    public record CommandResult(int returnCode, List<String> output) {
-        public boolean isSuccessful() {
-            return returnCode == 0;
-        }
-
-        public String firstLine() {
-            if (this.output.isEmpty()) {
-                return "";
-            }
-            return this.output.get(0);
-        }
-    }
 }

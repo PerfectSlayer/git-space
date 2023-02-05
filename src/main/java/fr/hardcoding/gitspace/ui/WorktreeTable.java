@@ -1,7 +1,8 @@
-package fr.hardcoding.gitspace;
+package fr.hardcoding.gitspace.ui;
 
 import com.googlecode.lanterna.gui2.table.Table;
 import com.googlecode.lanterna.gui2.table.TableModel;
+import fr.hardcoding.gitspace.model.Worktree;
 
 public class WorktreeTable extends Table<String> {
 

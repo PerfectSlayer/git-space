@@ -15,11 +15,12 @@ import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.gui2.Separator;
 import com.googlecode.lanterna.gui2.Window;
 import com.googlecode.lanterna.gui2.WindowListenerAdapter;
-import com.googlecode.lanterna.gui2.table.Table;
-import com.googlecode.lanterna.gui2.table.TableModel;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
+import fr.hardcoding.gitspace.shell.CommandException;
+import fr.hardcoding.gitspace.ui.WorktreeModel;
+import fr.hardcoding.gitspace.ui.WorktreeTable;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -76,7 +77,7 @@ public class Main {
             MultiWindowTextGUI gui = new MultiWindowTextGUI(screen, new DefaultWindowManager(), new EmptySpace(TextColor.ANSI.BLUE));
             gui.addWindowAndWait(window);
             screen.stopScreen();
-        } catch (IOException|CommandException e) {
+        } catch (IOException | CommandException e) {
             e.printStackTrace();
         }
     }

@@ -1,4 +1,8 @@
-package fr.hardcoding.gitspace;
+package fr.hardcoding.gitspace.ui;
+
+import fr.hardcoding.gitspace.model.Worktree;
+import fr.hardcoding.gitspace.shell.CommandException;
+import fr.hardcoding.gitspace.shell.GitCommands;
 
 import java.nio.file.Path;
 import java.util.List;

@@ -1,6 +1,8 @@
-package fr.hardcoding.gitspace;
+package fr.hardcoding.gitspace.shell;
 
-import fr.hardcoding.gitspace.ShellUtils.CommandResult;
+import fr.hardcoding.gitspace.model.PullRequest;
+import fr.hardcoding.gitspace.model.PullRequestState;
+import fr.hardcoding.gitspace.model.Worktree;
 
 import java.nio.file.Path;
 import java.util.ArrayList;

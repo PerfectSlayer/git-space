@@ -1,4 +1,4 @@
-package fr.hardcoding.gitspace;
+package fr.hardcoding.gitspace.model;
 
 public enum PullRequestState {
     OPEN,
