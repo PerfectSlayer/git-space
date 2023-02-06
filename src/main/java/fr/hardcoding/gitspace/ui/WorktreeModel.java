@@ -14,10 +14,11 @@ public class WorktreeModel {
     public WorktreeModel(Path rootDir) throws CommandException {
         this.rootDir = rootDir;
         this.worktrees = GitCommands.listWorktrees(this.rootDir);
-
         for (Worktree worktree : this.worktrees) {
             worktree.remoteBranch = GitCommands.getRemoteBranch(worktree.path);
-            worktree.pullRequest = GitCommands.getPr(this.rootDir, worktree.remoteBranch);
+            if (worktree.remoteBranch != null) {
+                worktree.pullRequest = GitCommands.getPr(this.rootDir, worktree.remoteBranch);
+            }
         }
     }
 

@@ -52,6 +52,9 @@ public final class GitCommands {
 
     public static String getRemoteBranch(Path branchDir) throws CommandException {
         CommandResult result = ShellUtils.run(branchDir, "git", "rev-parse", "--abbrev-ref", "--symbolic-full-name", "@{u}");
+        if (!result.isSuccessful()) {
+            return null;
+        }
         String firstLine = result.firstLine();
         if (firstLine.isEmpty()) {
             throw new CommandException("Failed to get remote branch for " + branchDir.toAbsolutePath());
