@@ -6,6 +6,7 @@ import fr.hardcoding.gitspace.model.Worktree;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public final class GitCommands {
@@ -62,13 +63,9 @@ public final class GitCommands {
         return firstLine;
     }
 
-    public static PullRequest getPr(Path rootDir, String removeBranch) throws CommandException {
-        String shortBranchName = removeBranch;
-        int index = shortBranchName.lastIndexOf("/");
-        if (index != -1) {
-            shortBranchName = shortBranchName.substring(index + 1);
-        }
-        CommandResult result = ShellUtils.run(rootDir, "gh", "pr", "view", shortBranchName);
+    public static PullRequest getPr(Path rootDir, String remoteBranch) throws CommandException {
+        String githubBranch = remoteToGithubBranch(remoteBranch);
+        CommandResult result = ShellUtils.run(rootDir, "gh", "pr", "view", githubBranch);
         if (!result.isSuccessful()) {
             return null; // No PR for this branch
         }
@@ -86,5 +83,16 @@ public final class GitCommands {
             }
         }
         return new PullRequest(number, url, state);
+    }
+
+    private static String remoteToGithubBranch(String remoteBranch) {
+        String[] parts = remoteBranch.split("/");
+        if (parts.length > 3 && "refs".equals(parts[0])) {
+            return String.join("/", Arrays.copyOfRange(parts, 3, parts.length));
+        }
+        if (parts.length > 1) {
+            return String.join("/",Arrays.copyOfRange(parts, 1, parts.length));
+        }
+        return remoteBranch;
     }
 }
