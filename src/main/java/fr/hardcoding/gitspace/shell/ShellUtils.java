@@ -1,11 +1,12 @@
 package fr.hardcoding.gitspace.shell;
 
+import static java.util.Collections.emptyList;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -20,22 +21,30 @@ public final class ShellUtils {
                 processBuilder.directory(workingDir.toFile());
             }
             Process process = processBuilder.start();
-            List<String> output = new ArrayList<>();
+            List<String> output, error;
             try (BufferedReader reader = process.inputReader()) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    output.add(line);
-                }
+                output = readAllLines(reader);
             }
-            int returnCode = process.waitFor(); // TODO Handle return code
-
-            return new CommandResult(returnCode, output);
+            try (BufferedReader reader = process.errorReader()) {
+                error = readAllLines(reader);
+            }
+            int returnCode = process.waitFor();
+            return new CommandResult(returnCode, output, error);
         } catch (IOException e) {
             throw new CommandException("Failed to run command " + Arrays.toString(commands), e);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            return new CommandResult(1, Collections.emptyList());
+            return new CommandResult(1, emptyList(), emptyList());
         }
+    }
+
+    private static List<String> readAllLines(BufferedReader reader) throws IOException {
+        List<String> lines = new ArrayList<>();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            lines.add(line);
+        }
+        return lines;
     }
 
     public static CommandResult run(String... command) throws CommandException {
