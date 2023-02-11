@@ -7,14 +7,18 @@ import com.googlecode.lanterna.gui2.MultiWindowTextGUI;
 import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import fr.hardcoding.gitspace.shell.CommandException;
+import fr.hardcoding.gitspace.ui.CreateWorktreeWindow;
 import fr.hardcoding.gitspace.ui.MainWindow;
 import fr.hardcoding.gitspace.ui.WorktreeModel;
 
 import java.io.IOException;
 import java.nio.file.Path;
 
-public class Main {
+public class Main implements AppActions {
 
+
+    private MultiWindowTextGUI gui;
+    private WorktreeModel model;
 
     public static void main(String[] args) {
         new Main().run();
@@ -25,16 +29,32 @@ public class Main {
         DefaultTerminalFactory defaultTerminalFactory = new DefaultTerminalFactory();
         try (TerminalScreen screen = defaultTerminalFactory.createScreen()) {
             screen.startScreen();
-            WorktreeModel model = new WorktreeModel(Path.of("."));
-            MainWindow window = new MainWindow(model);
-
+            Path rootDir = Path.of(".").toAbsolutePath().normalize(); // TODO Fetch Git root dir
+            this.model = new WorktreeModel(rootDir);
+            MainWindow window = new MainWindow(this, this.model);
             // Create gui and start gui
 //            MultiWindowTextGUI gui = new MultiWindowTextGUI(screen);
-            MultiWindowTextGUI gui = new MultiWindowTextGUI(screen, new DefaultWindowManager(), new EmptySpace(TextColor.ANSI.BLUE));
-            gui.addWindowAndWait(window);
+            this.gui = new MultiWindowTextGUI(screen, new DefaultWindowManager(), new EmptySpace(TextColor.ANSI.BLUE));
+            this.gui.addWindowAndWait(window);
             screen.stopScreen();
         } catch (IOException | CommandException e) {
             e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void createWorktree() {
+        this.gui.addWindow(new CreateWorktreeWindow(this));
+    }
+
+    @Override
+    public boolean createWorktree(String branchName, Path location) {
+        try {
+            this.model.create(branchName, location);
+            return true;
+        } catch (CommandException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 }

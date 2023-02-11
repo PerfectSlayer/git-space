@@ -22,6 +22,13 @@ public class WorktreeModel {
         }
     }
 
+    public void create(String branchName, Path location) throws CommandException {
+        if (!location.isAbsolute()) {
+            location = this.rootDir.resolve(location).normalize();
+        }
+        GitCommands.createWorktree(branchName, location);
+    }
+
     public Worktree get(int index) {
         if (index < 0 || index >= this.worktrees.size()) {
             return null;

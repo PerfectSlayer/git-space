@@ -19,6 +19,18 @@ public final class GitCommands {
         return Path.of(firstLine);
     }
 
+    public static void createWorktree(String branchNane, Path location) throws CommandException {
+        CommandResult result = ShellUtils.run("git", "worktree", "add", location.toAbsolutePath().toString());
+        if (!result.isSuccessful()) {
+            throw new CommandException("Failed to create worktree: "+String.join(" ", result.error()));
+        }
+        String currentBranchName = location.getFileName().toString();
+        result = ShellUtils.run(location, "git", "branch", "-m", currentBranchName, branchNane);
+        if (!result.isSuccessful()) {
+            throw new CommandException("Failed to rename worktree branch: "+String.join(" ", result.error()));
+        }
+    }
+
     public static List<Worktree> listWorktrees(Path rootDir) throws CommandException {
         List<Worktree> worktrees = new ArrayList<>();
 

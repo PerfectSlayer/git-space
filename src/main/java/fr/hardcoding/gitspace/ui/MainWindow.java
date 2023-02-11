@@ -12,6 +12,7 @@ import com.googlecode.lanterna.gui2.Separator;
 import com.googlecode.lanterna.gui2.Window;
 import com.googlecode.lanterna.gui2.WindowListenerAdapter;
 import com.googlecode.lanterna.input.KeyStroke;
+import fr.hardcoding.gitspace.AppActions;
 import fr.hardcoding.gitspace.model.Worktree;
 
 import java.awt.Desktop;
@@ -26,7 +27,7 @@ public class MainWindow extends BasicWindow {
 
     private static final String TITLE = "Git Space";
 
-    public MainWindow(WorktreeModel model) {
+    public MainWindow(AppActions actions, WorktreeModel model) {
         super(TITLE);
         setHints(List.of(Window.Hint.FULL_SCREEN));
 
@@ -45,7 +46,9 @@ public class MainWindow extends BasicWindow {
 
             @Override
             public void onUnhandledInput(Window basePane, KeyStroke keyStroke, AtomicBoolean hasBeenHandled) {
-                if (Objects.equals(keyStroke.getCharacter(), 'g')) {
+                if (Objects.equals(keyStroke.getCharacter(), 'c')) {
+                    actions.createWorktree();
+                } else if (Objects.equals(keyStroke.getCharacter(), 'g')) {
                     Worktree selectedWorktree = model.get(table.getSelectedRow());
                     if (selectedWorktree != null && selectedWorktree.pullRequest != null) {
                         try {
