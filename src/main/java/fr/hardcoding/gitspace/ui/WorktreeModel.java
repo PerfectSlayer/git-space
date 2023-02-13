@@ -16,7 +16,7 @@ public class WorktreeModel {
         this.worktrees = GitCommands.listWorktrees(this.rootDir);
         for (Worktree worktree : this.worktrees) {
             worktree.remoteBranch = GitCommands.getRemoteBranch(worktree.path);
-            if (worktree.remoteBranch != null) {
+            if (worktree.remoteBranch != null && !"master".equals(worktree.name)) {
                 worktree.pullRequest = GitCommands.getPr(this.rootDir, worktree.remoteBranch);
             }
         }
