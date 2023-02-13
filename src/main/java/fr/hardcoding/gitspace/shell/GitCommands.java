@@ -49,10 +49,14 @@ public final class GitCommands {
             Path path = Path.of(firstLine.substring(9));
             String name = path.getFileName().toString();
             String thirdLine = output.get(i * 4 + 2);
-            if (!thirdLine.startsWith("branch")) {
+            String branch;
+            if (thirdLine.startsWith("branch")) {
+                branch = thirdLine.substring(7);
+            } else if ("detached".equals(thirdLine)) {
+                branch = null; // Detached HEAD
+            } else {
                 throw new CommandException("Failed to read worktree branch from " + thirdLine);
             }
-            String branch = thirdLine.substring(7);
 
             Worktree worktree = new Worktree();
             worktree.name = name;
