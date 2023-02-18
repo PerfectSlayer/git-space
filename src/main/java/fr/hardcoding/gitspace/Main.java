@@ -13,31 +13,33 @@ import fr.hardcoding.gitspace.ui.WorktreeModel;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Main implements AppActions {
-
-
+    private final ExecutorService executor;
     private MultiWindowTextGUI gui;
     private WorktreeModel model;
 
     public static void main(String[] args) {
-        new Main().run();
-
+        new Main();
     }
 
-    private void run() {
+    private Main() {
+        this.executor = Executors.newSingleThreadExecutor();
         DefaultTerminalFactory defaultTerminalFactory = new DefaultTerminalFactory();
         try (TerminalScreen screen = defaultTerminalFactory.createScreen()) {
             screen.startScreen();
             Path rootDir = Path.of(".").toAbsolutePath().normalize(); // TODO Fetch Git root dir
             this.model = new WorktreeModel(rootDir);
+            this.executor.submit(this.model::load);
             MainWindow window = new MainWindow(this, this.model);
             // Create gui and start gui
 //            MultiWindowTextGUI gui = new MultiWindowTextGUI(screen);
             this.gui = new MultiWindowTextGUI(screen, new DefaultWindowManager(), new EmptySpace(TextColor.ANSI.BLUE));
             this.gui.addWindowAndWait(window);
             screen.stopScreen();
-        } catch (IOException | CommandException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -56,5 +58,10 @@ public class Main implements AppActions {
             e.printStackTrace();
             return false;
         }
+    }
+
+    @Override
+    public void quit() {
+        this.executor.shutdown();
     }
 }

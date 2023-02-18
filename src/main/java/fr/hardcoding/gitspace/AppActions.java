@@ -6,4 +6,6 @@ public interface AppActions {
     void createWorktree();
 
     boolean createWorktree(String branchName, Path location);
+
+    void quit();
 }

@@ -59,6 +59,7 @@ public class MainWindow extends BasicWindow {
                     }
                 } else if (Objects.equals(keyStroke.getCharacter(), 'q')) {
                     close();
+                    actions.quit();
                 }
             }
         });
