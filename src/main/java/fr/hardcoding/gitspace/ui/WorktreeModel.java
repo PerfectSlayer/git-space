@@ -27,10 +27,7 @@ public class WorktreeModel {
                 if (worktree.remoteBranch != null && !"master".equals(worktree.name)) {
                     worktree.pullRequest = GitCommands.getPr(this.rootDir, worktree.remoteBranch);
                 }
-                this.worktrees.add(worktree);
-                for (WorktreeModelListener listener : this.listeners) {
-                    listener.worktreeAdded(worktree);
-                }
+                addWorktree(worktree);
             }
         } catch (CommandException e) {
             e.printStackTrace();
@@ -42,6 +39,11 @@ public class WorktreeModel {
             location = this.rootDir.resolve(location).normalize();
         }
         GitCommands.createWorktree(branchName, location);
+        Worktree worktree = new Worktree();
+        worktree.name = location.getFileName().toString();
+        worktree.path = location;
+        worktree.localBranch = branchName;
+        addWorktree(worktree);
     }
 
     public Worktree get(int index) {
@@ -49,6 +51,13 @@ public class WorktreeModel {
             return null;
         }
         return this.worktrees.get(index);
+    }
+
+    private void addWorktree(Worktree worktree) {
+        this.worktrees.add(worktree);
+        for (WorktreeModelListener listener : this.listeners) {
+            listener.worktreeAdded(worktree);
+        }
     }
 
     public void addListener(WorktreeModelListener listener) {
