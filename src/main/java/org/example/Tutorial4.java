@@ -16,7 +16,7 @@ import com.googlecode.lanterna.terminal.Terminal;
 import java.io.IOException;
 import java.util.Random;
 
-public class Tutorial3 {
+public class Tutorial4 {
     public static void main(String[] args) {
         System.out.println("Hello world!");
 

@@ -8,7 +8,7 @@ import com.googlecode.lanterna.terminal.Terminal;
 
 import java.io.IOException;
 
-public class Main {
+public class Tutorial2 {
     public static void main(String[] args) throws IOException {
         System.out.println("Hello world!");
 

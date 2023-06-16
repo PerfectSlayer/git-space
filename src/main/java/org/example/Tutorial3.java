@@ -13,7 +13,7 @@ import com.googlecode.lanterna.terminal.TerminalResizeListener;
 
 import java.io.IOException;
 
-public class Tutorial2 {
+public class Tutorial3 {
     public static void main(String[] args) {
         System.out.println("Hello world!");
 
