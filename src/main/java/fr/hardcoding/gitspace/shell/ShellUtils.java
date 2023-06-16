@@ -2,19 +2,20 @@ package fr.hardcoding.gitspace.shell;
 
 import static java.util.Collections.emptyList;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Logger;
 
 public final class ShellUtils {
-    private static final Logger LOGGER = Logger.getLogger(ShellUtils.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger();
 
     public static CommandResult run(Path workingDir, String... commands) throws CommandException {
-        LOGGER.info("Running command: \"" + Arrays.toString(commands) + "\".");
+        LOGGER.info("Running command: \"{}\".", Arrays.toString(commands));
         try {
             ProcessBuilder processBuilder = new ProcessBuilder(commands);
             if (workingDir != null) {

@@ -29,6 +29,16 @@
             <version>3.1.1</version>
         </dependency>
         <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>2.20.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.20.0</version>
+        </dependency>
+        <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
             <version>13.0</version>
@@ -67,6 +77,10 @@
                             <mainClass>fr.hardcoding.gitspace.Main</mainClass>
                         </manifest>
                     </archive>
+                    <excludes>
+                        <!-- Exclude development logger configuration -->
+                        <exclude>log4j2-test.xml</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
         </plugins>
