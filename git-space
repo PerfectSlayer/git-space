@@ -9,8 +9,9 @@ else
   JAVA_BINARY=java
 fi
 
-TARGET_JAR_FILES=(target/git-space*.jar)
-JAR_FILES=(git-space*.jar)
+INSTALL_DIRECTORY=$(dirname -- "$0")
+TARGET_JAR_FILES=(${INSTALL_DIRECTORY}/target/git-space*.jar)
+JAR_FILES=(${INSTALL_DIRECTORY}/git-space*.jar)
 if [ -n "${TARGET_JAR_FILES[0]}" ]; then
   JAR_FILE=${TARGET_JAR_FILES[0]}
 elif [ -n "${JAR_FILES[0]}" ]; then
@@ -19,4 +20,4 @@ else
   JAR_FILE=git-space.jar
 fi
 
-LOG_FILE_PATH=$(dirname -- "$0")/git-space.log $JAVA_BINARY -jar $JAR_FILE
+LOG_FILE_PATH=${INSTALL_DIRECTORY}/git-space.log $JAVA_BINARY -jar $JAR_FILE
