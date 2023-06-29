@@ -1,5 +1,5 @@
 #!/bin/bash
-set -x
+set -e
 
 if [ -n "$JAVA_17_HOME" ]; then
   JAVA_BINARY=$JAVA_17_HOME/bin/java
@@ -10,8 +10,8 @@ else
 fi
 
 INSTALL_DIRECTORY=$(dirname -- "$0")
-TARGET_JAR_FILES=(${INSTALL_DIRECTORY}/target/git-space*.jar)
-JAR_FILES=(${INSTALL_DIRECTORY}/git-space*.jar)
+TARGET_JAR_FILES=("${INSTALL_DIRECTORY}/target/git-space*.jar")
+JAR_FILES=("${INSTALL_DIRECTORY}/git-space*.jar")
 if [ -n "${TARGET_JAR_FILES[0]}" ]; then
   JAR_FILE=${TARGET_JAR_FILES[0]}
 elif [ -n "${JAR_FILES[0]}" ]; then
