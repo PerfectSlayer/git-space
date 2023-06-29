@@ -3,6 +3,8 @@ package fr.hardcoding.gitspace.shell;
 import fr.hardcoding.gitspace.model.PullRequest;
 import fr.hardcoding.gitspace.model.PullRequestState;
 import fr.hardcoding.gitspace.model.Worktree;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -10,6 +12,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public final class GitCommands {
+    private static final Logger LOGGER = LogManager.getLogger();
+
     public static Path getRootDir(Path dir) throws CommandException {
         CommandResult result = ShellUtils.run("git", "rev-parse", "--show-toplevel");
         String firstLine = result.firstLine();
@@ -22,12 +26,12 @@ public final class GitCommands {
     public static void createWorktree(String branchNane, Path location) throws CommandException {
         CommandResult result = ShellUtils.run("git", "worktree", "add", location.toAbsolutePath().toString());
         if (!result.isSuccessful()) {
-            throw new CommandException("Failed to create worktree: "+String.join(" ", result.error()));
+            throw new CommandException("Failed to create worktree: " + String.join(" ", result.error()));
         }
         String currentBranchName = location.getFileName().toString();
         result = ShellUtils.run(location, "git", "branch", "-m", currentBranchName, branchNane);
         if (!result.isSuccessful()) {
-            throw new CommandException("Failed to rename worktree branch: "+String.join(" ", result.error()));
+            throw new CommandException("Failed to rename worktree branch: " + String.join(" ", result.error()));
         }
     }
 
@@ -89,7 +93,7 @@ public final class GitCommands {
         String url = null;
         PullRequestState state = null;
         for (String line : result.output()) {
-            System.out.println("line = " + line);
+            LOGGER.trace("line = " + line);
             if (line.startsWith("number:")) {
                 number = Integer.parseInt(line.substring(8));
             } else if (line.startsWith("url:")) {
@@ -107,7 +111,7 @@ public final class GitCommands {
             return String.join("/", Arrays.copyOfRange(parts, 3, parts.length));
         }
         if (parts.length > 1) {
-            return String.join("/",Arrays.copyOfRange(parts, 1, parts.length));
+            return String.join("/", Arrays.copyOfRange(parts, 1, parts.length));
         }
         return remoteBranch;
     }
