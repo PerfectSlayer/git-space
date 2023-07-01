@@ -3,6 +3,7 @@ package fr.hardcoding.gitspace.ui;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.BasicWindow;
 import com.googlecode.lanterna.gui2.Button;
+import com.googlecode.lanterna.gui2.EmptySpace;
 import com.googlecode.lanterna.gui2.GridLayout;
 import com.googlecode.lanterna.gui2.Label;
 import com.googlecode.lanterna.gui2.Panel;
@@ -11,6 +12,9 @@ import fr.hardcoding.gitspace.AppActions;
 
 import java.nio.file.Path;
 import java.util.List;
+
+import static com.googlecode.lanterna.gui2.GridLayout.Alignment.BEGINNING;
+import static com.googlecode.lanterna.gui2.GridLayout.Alignment.FILL;
 
 public class CreateWorktreeWindow extends BasicWindow {
     private static final String BRANCH_NAME_PREFIX = "bbujon/";  // TODO Find how to read / parametrize
@@ -25,21 +29,20 @@ public class CreateWorktreeWindow extends BasicWindow {
         setHints(List.of(Hint.CENTERED));
 
         Panel contentPanel = new Panel();
-        contentPanel.setLayoutManager(new GridLayout(2));
+        contentPanel.setLayoutManager(new GridLayout(3));
 
         contentPanel.addComponent(new Label("Branch name"));
-        this.branchNameTextBox = new TextBox(new TerminalSize(30, 1))
+        this.branchNameTextBox = new TextBox(new TerminalSize(30, 1));
 //                .setValidationPattern(Pattern.compile("[0-9]*"))  // TODO Check if the branch name does not already exist
-                .addTo(contentPanel);
+        contentPanel.addComponent(this.branchNameTextBox, GridLayout.createLayoutData(FILL, BEGINNING, false, false, 2, 1));
         this.branchNameTextBox.setTextChangeListener(this::syncFields);
 
         contentPanel.addComponent(new Label("Location"));
-        this.locationTextBox = new TextBox(new TerminalSize(30, 1))
+        this.locationTextBox = new TextBox(new TerminalSize(30, 1));
 //                .setValidationPattern(Pattern.compile("[0-9]*"))  // TODO Check if the path is valid
-                .addTo(contentPanel);
+        contentPanel.addComponent(this.locationTextBox, GridLayout.createLayoutData(FILL, BEGINNING, false, false, 2, 1));
 
-// TODO Improve buttons layout and focus order
-//        contentPanel.addComponent(new EmptySpace(new TerminalSize(0, 0)));
+        contentPanel.addComponent(new EmptySpace(new TerminalSize(0, 0)));
         new Button("Create", this::create).addTo(contentPanel);
         new Button("Abort", this::close).addTo(contentPanel);
 
