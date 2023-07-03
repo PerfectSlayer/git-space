@@ -56,6 +56,9 @@ public final class GitCommands {
             String branch;
             if (thirdLine.startsWith("branch")) {
                 branch = thirdLine.substring(7);
+                if (branch.startsWith("refs/heads/")) {
+                    branch = branch.substring(11);
+                }
             } else if ("detached".equals(thirdLine)) {
                 branch = null; // Detached HEAD
             } else {
