@@ -46,16 +46,20 @@ public class MainWindow extends BasicWindow {
 
             @Override
             public void onUnhandledInput(Window basePane, KeyStroke keyStroke, AtomicBoolean hasBeenHandled) {
+                Worktree selectedWorktree = model.get(table.getSelectedRow());
                 if (Objects.equals(keyStroke.getCharacter(), 'c')) {
-                    actions.createWorktree();
+                    actions.promptWorktreeCreation();
                 } else if (Objects.equals(keyStroke.getCharacter(), 'g')) {
-                    Worktree selectedWorktree = model.get(table.getSelectedRow());
                     if (selectedWorktree != null && selectedWorktree.pullRequest != null) {
                         try {
                             Desktop.getDesktop().browse(new URI(selectedWorktree.pullRequest.url()));
                         } catch (IOException | URISyntaxException e) {
-                            throw new RuntimeException(e);
+                            throw new RuntimeException(e);  // TODO Handle
                         }
+                    }
+                } else if (Objects.equals(keyStroke.getCharacter(), 'd')) {
+                    if (selectedWorktree != null) {
+                        actions.promptWorktreeDeletion(selectedWorktree);
                     }
                 } else if (Objects.equals(keyStroke.getCharacter(), 'q')) {
                     close();

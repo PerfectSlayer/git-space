@@ -1,5 +1,6 @@
 package fr.hardcoding.gitspace.shell;
 
+import fr.hardcoding.gitspace.AppActions;
 import fr.hardcoding.gitspace.model.PullRequest;
 import fr.hardcoding.gitspace.model.PullRequestState;
 import fr.hardcoding.gitspace.model.Worktree;
@@ -10,6 +11,9 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
+
+import static fr.hardcoding.gitspace.AppActions.DeletionOptions.GIT_BRANCH;
 
 public final class GitCommands {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -117,5 +121,19 @@ public final class GitCommands {
             return String.join("/", Arrays.copyOfRange(parts, 1, parts.length));
         }
         return remoteBranch;
+    }
+
+    public static void deleteWorktree(Worktree worktree, Set<AppActions.DeletionOptions> options) throws CommandException {
+        String path = worktree.path.toAbsolutePath().toString();
+        CommandResult result = ShellUtils.run("git", "worktree", "remove", path, "--force");
+        if (!result.isSuccessful()) {
+            throw new CommandException("Failed to delete worktree " + path);
+        }
+        if (options.contains(GIT_BRANCH)) {
+            result = ShellUtils.run("git", "branch", "-D", worktree.localBranch);
+            if (!result.isSuccessful()) {
+                throw new CommandException("Failed to delete branch " + worktree.localBranch);
+            }
+        }
     }
 }

@@ -6,17 +6,23 @@ import com.googlecode.lanterna.gui2.EmptySpace;
 import com.googlecode.lanterna.gui2.MultiWindowTextGUI;
 import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
+import fr.hardcoding.gitspace.model.Worktree;
 import fr.hardcoding.gitspace.shell.CommandException;
 import fr.hardcoding.gitspace.ui.CreateWorktreeWindow;
+import fr.hardcoding.gitspace.ui.DeleteWorktreeWindow;
 import fr.hardcoding.gitspace.ui.MainWindow;
 import fr.hardcoding.gitspace.ui.WorktreeModel;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Main implements AppActions {
+    private static final Logger LOGGER = LogManager.getLogger();
     private final ExecutorService executor;
     private MultiWindowTextGUI gui;
     private WorktreeModel model;
@@ -45,7 +51,7 @@ public class Main implements AppActions {
     }
 
     @Override
-    public void createWorktree() {
+    public void promptWorktreeCreation() {
         this.gui.addWindow(new CreateWorktreeWindow(this));
     }
 
@@ -55,7 +61,24 @@ public class Main implements AppActions {
             this.model.create(branchName, location);
             return true;
         } catch (CommandException e) {
+            LOGGER.warn("Failed to crete worktree", e);
             e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public void promptWorktreeDeletion(Worktree worktree) {
+        this.gui.addWindow(new DeleteWorktreeWindow(this, worktree));
+    }
+
+    @Override
+    public boolean deleteWorktree(Worktree worktree, Set<DeletionOptions> options) {
+        try {
+            this.model.delete(worktree, options);
+            return true;
+        } catch (CommandException e) {
+            LOGGER.warn("Failed to delete worktree", e);
             return false;
         }
     }

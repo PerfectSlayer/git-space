@@ -1,5 +1,6 @@
 package fr.hardcoding.gitspace.ui;
 
+import fr.hardcoding.gitspace.AppActions;
 import fr.hardcoding.gitspace.model.Worktree;
 import fr.hardcoding.gitspace.shell.CommandException;
 import fr.hardcoding.gitspace.shell.GitCommands;
@@ -7,6 +8,7 @@ import fr.hardcoding.gitspace.shell.GitCommands;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class WorktreeModel {
     final Path rootDir;
@@ -53,10 +55,25 @@ public class WorktreeModel {
         return this.worktrees.get(index);
     }
 
+    public void delete(Worktree worktree, Set<AppActions.DeletionOptions> options) throws CommandException {
+        if (!this.worktrees.contains(worktree)) {
+            return;
+        }
+        GitCommands.deleteWorktree(worktree, options);
+        removeWorktree(worktree);
+    }
+
     private void addWorktree(Worktree worktree) {
         this.worktrees.add(worktree);
         for (WorktreeModelListener listener : this.listeners) {
             listener.worktreeAdded(worktree);
+        }
+    }
+
+    private void removeWorktree(Worktree worktree) {
+        this.worktrees.remove(worktree);
+        for (WorktreeModelListener listener : this.listeners) {
+            listener.worktreeRemoved(worktree);
         }
     }
 
