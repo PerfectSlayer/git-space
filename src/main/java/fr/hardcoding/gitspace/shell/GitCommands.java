@@ -123,6 +123,15 @@ public final class GitCommands {
         return remoteBranch;
     }
 
+    public static boolean checkForLocalChanges(Worktree worktree) throws CommandException {
+        Path worktreePath = worktree.path.toAbsolutePath();
+        CommandResult result = ShellUtils.run(worktreePath, "git", "status", "--porcelain", "--untracked-files=no");
+        if (!result.isSuccessful()) {
+            throw new CommandException("Failed to check local changes on worktree to delete");
+        }
+        return !result.firstLine().isEmpty();
+    }
+
     public static void deleteWorktree(Worktree worktree, Set<AppActions.DeletionOptions> options) throws CommandException {
         String path = worktree.path.toAbsolutePath().toString();
         CommandResult result = ShellUtils.run("git", "worktree", "remove", path, "--force");

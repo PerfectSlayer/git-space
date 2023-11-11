@@ -70,6 +70,11 @@ public class WorktreeModel {
         }
     }
 
+    public DeletionChecks checkForRemoval(Worktree worktree) throws CommandException{
+        boolean localChanges = GitCommands.checkForLocalChanges(worktree);
+        return new DeletionChecks(localChanges);
+    }
+
     private void removeWorktree(Worktree worktree) {
         this.worktrees.remove(worktree);
         for (WorktreeModelListener listener : this.listeners) {
@@ -80,4 +85,6 @@ public class WorktreeModel {
     public void addListener(WorktreeModelListener listener) {
         this.listeners.add(listener);
     }
+
+    public record DeletionChecks(boolean localChanges) {}
 }

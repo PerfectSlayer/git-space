@@ -12,6 +12,7 @@ import fr.hardcoding.gitspace.ui.CreateWorktreeWindow;
 import fr.hardcoding.gitspace.ui.DeleteWorktreeWindow;
 import fr.hardcoding.gitspace.ui.MainWindow;
 import fr.hardcoding.gitspace.ui.WorktreeModel;
+import fr.hardcoding.gitspace.ui.WorktreeModel.DeletionChecks;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -69,7 +70,12 @@ public class Main implements AppActions {
 
     @Override
     public void promptWorktreeDeletion(Worktree worktree) {
-        this.gui.addWindow(new DeleteWorktreeWindow(this, worktree));
+        try {
+            DeletionChecks checks = this.model.checkForRemoval(worktree);
+            this.gui.addWindow(new DeleteWorktreeWindow(this, worktree, checks));
+        } catch (CommandException e) {
+            LOGGER.warn("Failed to prompt for worktree deletion", e);
+        }
     }
 
     @Override
